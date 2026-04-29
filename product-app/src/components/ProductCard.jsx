@@ -1,16 +1,20 @@
 function ProductCard({ product }) {
   return (
-    <div className="product-card">
-      <img
-        src={product.thumbnail}
-        alt={product.title}
-        className="product-image"
-      />
+    <div className="card">
+      {/* image */}
+      <img src={product.thumbnail} alt={product.title} />
 
+      {/* title */}
       <h3>{product.title}</h3>
-      <p>Category: {product.category}</p>
-      <p>Price: ${product.price}</p>
-      <p>Rating: ⭐ {product.rating}</p>
+
+      {/* category */}
+      <p className="category">{product.category}</p>
+
+      {/* price */}
+      <p className="price">${product.price}</p>
+
+      {/* rating */}
+      <p className="rating">⭐ {product.rating}</p>
     </div>
   );
 }
