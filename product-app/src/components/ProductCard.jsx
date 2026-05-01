@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
+
 function ProductCard({ product }) {
-  // Determine stock status
-  let stockStatus = "";
+  let stockStatus;
 
   if (product.stock === 0) {
     stockStatus = "Sold Out";
@@ -12,25 +13,18 @@ function ProductCard({ product }) {
 
   return (
     <div className="card">
-      {/* image */}
       <img src={product.thumbnail} alt={product.title} />
 
-      {/* title */}
-      <h3>{product.title}</h3>
+      <h3>
+        <Link to={`/product/${product.id}`} className="product-title-link">
+          {product.title}
+        </Link>
+      </h3>
 
-      {/* brand */}
-      <p className="brand">Brand: {product.brand}</p>
-
-      {/* category */}
+      <p className="brand">{product.brand}</p>
       <p className="category">{product.category}</p>
-
-      {/* price */}
       <p className="price">${product.price}</p>
-
-      {/* rating */}
       <p className="rating">⭐ {product.rating}</p>
-
-      {/* stock status */}
       <p className="stock">{stockStatus}</p>
     </div>
   );
