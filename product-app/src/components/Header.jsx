@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "./Header.css";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 function Header() {
   const [categories, setCategories] = useState([]);
+  const [query, setQuery] = useState("");
+  const { cart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("https://dummyjson.com/products/categories")
@@ -11,14 +14,36 @@ function Header() {
       .then((data) => setCategories(data));
   }, []);
 
+  const handleSearch = () => {
+    if (query.trim() !== "") {
+      navigate(`/?search=${query}`);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <header className="header">
       <div className="header-main">
         <h2 className="logo">Maurica Shop</h2>
 
+        <div className="header-search">
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSearch();
+            }}
+          />
+
+          <button onClick={handleSearch}>Search</button>
+        </div>
+
         <nav className="nav">
           <Link to="/">Home</Link>
-          <Link to="/cart">Cart (0)</Link>
+          <Link to="/cart">Cart ({cart.length})</Link>
         </nav>
       </div>
 

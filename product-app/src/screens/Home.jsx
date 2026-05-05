@@ -1,77 +1,48 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import "../App.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
 
-  const handleSearch = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      let url = "https://dummyjson.com/products";
-
-      if (query) {
-        url = `https://dummyjson.com/products/search?q=${query}`;
-      }
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      setProducts(data.products || []);
-    } catch (err) {
-      console.log("Error:", err.message);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const location = useLocation();
 
   useEffect(() => {
-    handleSearch();
-  }, []);
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError("");
 
-  if (loading) {
-    return (
-      <div className="app">
-        <p>Loading products...</p>
-      </div>
-    );
-  }
+      try {
+        const params = new URLSearchParams(location.search);
+        const searchQuery = params.get("search");
 
-  if (error) {
-    return (
-      <div className="app">
-        <p>Error: {error}</p>
-      </div>
-    );
-  }
+        let url = "https://dummyjson.com/products";
+
+        if (searchQuery) {
+          url = `https://dummyjson.com/products/search?q=${searchQuery}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        setProducts(data.products || []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [location.search]);
+
+  if (loading) return <p className="message">Loading products...</p>;
+  if (error) return <p className="message">Error: {error}</p>;
 
   return (
-    <div className="app">
-      <div className="search-container">
-        <span className="search-icon">🔍</span>
-
-        <input
-          type="text"
-          placeholder="Search..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearch();
-          }}
-          className="search-input"
-        />
-
-        <button onClick={handleSearch} className="search-button">
-          Search
-        </button>
-      </div>
-
+    <div className="page">
       <div className="products">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />

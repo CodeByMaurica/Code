@@ -1,8 +1,9 @@
 import { Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
 import Home from "./screens/Home";
 import Details from "./screens/Details";
-import Header from "./components/Header";
 import Category from "./screens/Category";
+import Cart from "./screens/Cart";
 
 function App() {
   return (
@@ -12,9 +13,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/product/:id" element={<Details />} />
-
-       
         <Route path="/category/:name" element={<Category />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </>
   );
