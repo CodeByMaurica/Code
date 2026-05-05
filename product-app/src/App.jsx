@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Home from "./screens/Home";
 import Details from "./screens/Details"; // <-- ADD THIS
-
+import Header from "./components/Header";
 function App() {
   return (
     <Routes>
