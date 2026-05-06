@@ -1,52 +1,53 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 
 function Home() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  const location = useLocation();
+  // Store products from API
+  const [products, setProducts] = useState([]);
+
+  // Loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError("");
 
-      try {
-        const params = new URLSearchParams(location.search);
-        const searchQuery = params.get("search");
+    fetch("https://dummyjson.com/products")
 
-        let url = "https://dummyjson.com/products";
+      .then((res) => res.json())
 
-        if (searchQuery) {
-          url = `https://dummyjson.com/products/search?q=${searchQuery}`;
-        }
+      .then((data) => {
 
-        const res = await fetch(url);
-        const data = await res.json();
+        // Save products
+        setProducts(data.products);
 
-        setProducts(data.products || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
+        // Stop loading
         setLoading(false);
-      }
-    };
+      });
 
-    fetchProducts();
-  }, [location.search]);
+  }, []);
 
-  if (loading) return <p className="message">Loading products...</p>;
-  if (error) return <p className="message">Error: {error}</p>;
+  // Loading message
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
   return (
     <div className="page">
+
+      {/* Products grid */}
       <div className="products">
+
+        {/* Loop through products */}
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+
+          // Send ONE product into ProductCard
+          <ProductCard
+            key={product.id}
+            product={product}
+          />
+
         ))}
+
       </div>
     </div>
   );

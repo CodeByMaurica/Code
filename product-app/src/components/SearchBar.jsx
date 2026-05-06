@@ -1,16 +1,22 @@
 function SearchBar({ search, setSearch }) {
+
+  // Handles typing in input
+  const handleChange = (e) => {
+    setSearch(e.target.value);
+  };
+
   return (
     <div className="search-container">
 
-      {/* 🔍 Icon */}
-      <span className="search-icon">🔍</span>
+      <span className="search-icon">
+        🔍
+      </span>
 
-      {/* Input */}
       <input
         type="text"
         placeholder="Search products..."
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={handleChange}
         className="search-input"
       />
 

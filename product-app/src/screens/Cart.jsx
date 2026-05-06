@@ -8,7 +8,7 @@ function Cart() {
     return (
       <div className="cart-page">
         <h1>Your Cart</h1>
-        <p>Your cart is empty.</p>
+        <p className="message">Your cart is empty.</p>
       </div>
     );
   }
@@ -19,7 +19,7 @@ function Cart() {
 
       <div className="cart-items">
         {cart.map((item) => (
-          <div className="cart-item" key={item.id}>
+          <div className="cart-item" key={item.cartId}>
             <img src={item.thumbnail} alt={item.title} />
 
             <div className="cart-info">
@@ -28,9 +28,10 @@ function Cart() {
               <p>${item.price}</p>
             </div>
 
+            {/* Remove only this cart item */}
             <button
               className="remove-btn"
-              onClick={() => removeFromCart(item.id)}
+              onClick={() => removeFromCart(item.cartId)}
             >
               Remove
             </button>

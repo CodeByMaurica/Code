@@ -3,21 +3,35 @@ import { useEffect, useState, useContext } from "react";
 import { CartContext } from "../context/CartContext";
 
 function Header() {
+  // Stores product categories from DummyJSON
   const [categories, setCategories] = useState([]);
+
+  // Stores what the user types in the search bar
   const [query, setQuery] = useState("");
+
+  // Gets cart from your CartContext so we can show cart count
   const { cart } = useContext(CartContext);
+
+  // Lets us move the user to another page with code
   const navigate = useNavigate();
 
+  // Runs one time when Header loads
   useEffect(() => {
     fetch("https://dummyjson.com/products/categories")
       .then((res) => res.json())
-      .then((data) => setCategories(data));
+      .then((data) => setCategories(data))
+      .catch((error) => console.error("Category fetch error:", error));
   }, []);
 
+  // Runs when user clicks Search or presses Enter
   const handleSearch = () => {
-    if (query.trim() !== "") {
-      navigate(`/?search=${query}`);
+    const cleanQuery = query.trim();
+
+    if (cleanQuery !== "") {
+      // Sends search text to Home page URL
+      navigate(`/?search=${encodeURIComponent(cleanQuery)}`);
     } else {
+      // If search is empty, go back to normal home page
       navigate("/");
     }
   };
