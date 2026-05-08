@@ -1,41 +1,90 @@
 /* eslint-disable react-refresh/only-export-components */
+
 import { createContext, useState } from "react";
 
+// Creates global cart context
 export const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  // Stores all items added to cart
+  // Stores all products added to cart
   const [cart, setCart] = useState([]);
 
   // Adds product to cart
   const addToCart = (product) => {
-    const cartItem = {
-      ...product,
+    setCart((prevCart) => {
+      // Checks if product already exists in cart
+      const existingItem = prevCart.find(
+        (item) => item.id === product.id
+      );
 
-      // Gives each cart item a unique ID
-      // This prevents remove button from deleting duplicates
-      cartId: crypto.randomUUID(),
-    };
+      // If product already exists, increase quantity
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
+            : item
+        );
+      }
 
-    setCart((prevCart) => [...prevCart, cartItem]);
+      // Otherwise add brand new item to cart
+      return [
+        ...prevCart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ];
+    });
   };
 
-  // Removes only the clicked cart item
-  const removeFromCart = (cartId) => {
+  // Removes 1 quantity from cart
+  const removeOneFromCart = (productId) => {
     setCart((prevCart) =>
-      prevCart.filter((item) => item.cartId !== cartId)
+      prevCart
+        .map((item) =>
+          item.id === productId
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item
+        )
+
+        // Removes item completely if quantity becomes 0
+        .filter((item) => item.quantity > 0)
     );
   };
 
-  // Adds all item prices together
-  const totalPrice = cart.reduce(
-    (total, item) => total + Number(item.price),
-    0
-  );
+  // Removes entire item from cart
+  const removeFromCart = (productId) => {
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.id !== productId)
+    );
+  };
+
+  // Calculates total price of all items
+  const totalPrice = cart.reduce((total, item) => {
+    return total + Number(item.price) * item.quantity;
+  }, 0);
+
+  // Calculates total number of items in cart
+  const cartCount = cart.reduce((total, item) => {
+    return total + item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, totalPrice }}
+      value={{
+        cart,
+        addToCart,
+        removeOneFromCart,
+        removeFromCart,
+        totalPrice,
+        cartCount,
+      }}
     >
       {children}
     </CartContext.Provider>

@@ -9,8 +9,8 @@ function Header() {
   // Stores what the user types in the search bar
   const [query, setQuery] = useState("");
 
-  // Gets cart from your CartContext so we can show cart count
-  const { cart } = useContext(CartContext);
+  // Gets cartCount from your CartContext so we can show total quantity in cart
+  const { cartCount } = useContext(CartContext);
 
   // Lets us move the user to another page with code
   const navigate = useNavigate();
@@ -57,7 +57,9 @@ function Header() {
 
         <nav className="nav">
           <Link to="/">Home</Link>
-          <Link to="/cart">Cart ({cart.length})</Link>
+
+          {/* Shows total number of items, including quantity */}
+          <Link to="/cart">Cart ({cartCount})</Link>
         </nav>
       </div>
 
