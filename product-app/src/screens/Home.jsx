@@ -1,53 +1,57 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 
 function Home() {
-
-  // Store products from API
   const [products, setProducts] = useState([]);
-
-  // Loading state
   const [loading, setLoading] = useState(true);
 
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const search = searchParams.get("search") || "";
+
   useEffect(() => {
+    let url = "https://dummyjson.com/products";
 
-    fetch("https://dummyjson.com/products")
+    if (search.trim() !== "") {
+      url = `https://dummyjson.com/products/search?q=${search}`;
+    }
 
+    setLoading(true);
+
+    fetch(url)
       .then((res) => res.json())
-
       .then((data) => {
-
-        // Save products
-        setProducts(data.products);
-
-        // Stop loading
+        setProducts(data.products || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.log("Error fetching products:", error);
+        setProducts([]);
         setLoading(false);
       });
+  }, [search]);
 
-  }, []);
-
-  // Loading message
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <h2 className="loading">Loading...</h2>;
   }
 
   return (
     <div className="page">
+      {search && (
+        <h2 className="search-results-title">
+          Search results for: {search}
+        </h2>
+      )}
 
-      {/* Products grid */}
       <div className="products">
-
-        {/* Loop through products */}
-        {products.map((product) => (
-
-          // Send ONE product into ProductCard
-          <ProductCard
-            key={product.id}
-            product={product}
-          />
-
-        ))}
-
+        {products.length > 0 ? (
+          products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))
+        ) : (
+          <h2>No products found.</h2>
+        )}
       </div>
     </div>
   );

@@ -1,26 +1,36 @@
-function SearchBar({ search, setSearch }) {
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-  // Handles typing in input
-  const handleChange = (e) => {
-    setSearch(e.target.value);
+function SearchBar() {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (search.trim() === "") {
+      navigate("/");
+    } else {
+      navigate(`/?search=${search}`);
+    }
   };
 
   return (
-    <div className="search-container">
-
-      <span className="search-icon">
-        🔍
-      </span>
+    <form onSubmit={handleSubmit} className="search-container">
+      <span className="search-icon">🔍</span>
 
       <input
         type="text"
         placeholder="Search products..."
         value={search}
-        onChange={handleChange}
+        onChange={(e) => setSearch(e.target.value)}
         className="search-input"
       />
 
-    </div>
+      <button type="submit" className="search-button">
+        Search
+      </button>
+    </form>
   );
 }
 
