@@ -1,29 +1,20 @@
-import { useEffect, useState } from "react";
-import MovieCard from "./components/MovieCard";
-import type { Movie } from "./types/Movie";
+import { Routes, Route, Navigate } from "react-router-dom";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
+import Home from "./screens/Home";
+import Movies from "./screens/Movies";
+import TvShows from "./screens/TvShows";
+import Animes from "./screens/Animes";
+import MovieDetails from "./screens/MovieDetails";
 
 export default function App() {
-  const [movies, setMovies] = useState<Movie[]>([]);
-
-  useEffect(() => {
-    fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}`
-    )
-      .then((res) => res.json()) // turn into usable code
-      .then((data) => {
-        console.log(data);
-
-        setMovies(data.results);
-      });
-  }, []);
-
   return (
-    <div className="movie-grid">
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} movie={movie} />
-      ))}
-    </div>
+    <Routes>
+      <Route path="/" element={<Navigate to="/home" />} />
+      <Route path="/home" element={<Home />} />
+      <Route path="/movies" element={<Movies />} />
+      <Route path="/tv-shows" element={<TvShows />} />
+      <Route path="/animes" element={<Animes />} />
+      <Route path="/movie/:id" element={<MovieDetails />} />
+    </Routes>
   );
 }
