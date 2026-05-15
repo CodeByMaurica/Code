@@ -6,9 +6,9 @@ import MovieCard from "../components/MovieCard";
 
 import type { Movie } from "../types/movie";
 
-import { getPopularMovies, searchMovies } from "../api/tmdb";
+import { getNowPlayingMovies, searchMovies } from "../api/tmdb";
 
-export default function Movies() {
+export default function NowPlaying() {
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -16,7 +16,7 @@ export default function Movies() {
 
   useEffect(() => {
     async function loadMovies() {
-      const results = await getPopularMovies();
+      const results = await getNowPlayingMovies();
 
       setMovies(results);
     }
@@ -27,7 +27,7 @@ export default function Movies() {
   async function handleSearch() {
     const results =
       search.trim() === ""
-        ? await getPopularMovies()
+        ? await getNowPlayingMovies()
         : await searchMovies(search);
 
     setMovies(results);
@@ -46,7 +46,7 @@ export default function Movies() {
       </button>
 
       <section className="all-page">
-        <h1>LTM Movies</h1>
+        <h1>LTM Now Playing</h1>
 
         <div className="movie-grid">
           {movies.map((movie) => (

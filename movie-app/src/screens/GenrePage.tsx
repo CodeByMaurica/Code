@@ -1,33 +1,53 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
 
 import type { Movie } from "../types/movie";
 
-import { getPopularMovies, searchMovies } from "../api/tmdb";
+import { getAllByGenre, searchMovies } from "../api/tmdb";
 
-export default function Movies() {
+const genreMap: Record<string, number> = {
+  action: 28,
+  adventure: 12,
+  anime: 16,
+  biography: 36,
+  crime: 80,
+  comedy: 35,
+  documentary: 99,
+  drama: 18,
+};
+
+export default function GenrePage() {
+  const { genreName } = useParams();
+
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
+  const currentGenre = genreName || "action";
+
+  const genreId = genreMap[currentGenre];
+
+  const pageTitle =
+    currentGenre.charAt(0).toUpperCase() + currentGenre.slice(1);
+
   useEffect(() => {
-    async function loadMovies() {
-      const results = await getPopularMovies();
+    async function loadGenre() {
+      const results = await getAllByGenre(genreId);
 
       setMovies(results);
     }
 
-    loadMovies();
-  }, []);
+    loadGenre();
+  }, [genreId]);
 
   async function handleSearch() {
     const results =
       search.trim() === ""
-        ? await getPopularMovies()
+        ? await getAllByGenre(genreId)
         : await searchMovies(search);
 
     setMovies(results);
@@ -46,7 +66,7 @@ export default function Movies() {
       </button>
 
       <section className="all-page">
-        <h1>LTM Movies</h1>
+        <h1>LTM {pageTitle}</h1>
 
         <div className="movie-grid">
           {movies.map((movie) => (

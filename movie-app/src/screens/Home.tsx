@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
@@ -6,51 +7,42 @@ import MovieCard from "../components/MovieCard";
 import type { Movie } from "../types/movie";
 
 import {
-  getPopularMovies,
+  getHomeContent,
   searchMovies,
-  getAllByGenre,
 } from "../api/tmdb";
 
-const IMAGE_URL = import.meta.env.VITE_MOVIE_IMAGE_URL;
+const IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 export default function Home() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
-  useEffect(() => {
-    async function loadMovies() {
-      const results = await getPopularMovies();
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    async function loadContent() {
+      const results = await getHomeContent();
       setMovies(results);
     }
 
-    loadMovies();
+    loadContent();
   }, []);
 
   async function handleSearch() {
     const results =
       search.trim() === ""
-        ? await getPopularMovies()
+        ? await getHomeContent()
         : await searchMovies(search);
 
     setMovies(results);
   }
 
-  async function handleGenreClick(genreId: number) {
-    const results = await getAllByGenre(genreId);
-
-    setMovies(results);
-  }
-
   const heroMovie = movies[0];
-
   const movieRow = movies.slice(1, 25);
 
   const heroImage =
     heroMovie?.backdrop_path || heroMovie?.poster_path
-      ? `${IMAGE_URL}original${
-          heroMovie.backdrop_path || heroMovie.poster_path
-        }`
+      ? `${IMAGE_URL}original${heroMovie.backdrop_path || heroMovie.poster_path}`
       : "";
 
   return (
@@ -81,11 +73,11 @@ export default function Home() {
             <span className="gold-badge">LTM ENT</span>
 
             <div className="hero-rating">
-              <span>⭐ {heroMovie.vote_average.toFixed(1)}</span>
+              <span>⭐ {heroMovie.vote_average?.toFixed(1)}</span>
               <span>•</span>
               <span>{heroMovie.release_date?.slice(0, 4)}</span>
               <span>•</span>
-              <span>Now Showing</span>
+              <span>{heroMovie.media_type === "tv" ? "TV Show" : "Movie"}</span>
             </div>
 
             <h1>{heroMovie.title}</h1>
@@ -94,106 +86,31 @@ export default function Home() {
 
             <div className="hero-buttons">
               <button className="play-btn">▶ WATCH</button>
-
-              <button className="add-btn">＋ ADD TO LIST</button>
             </div>
           </div>
         </section>
       )}
 
       <section className="below-hero">
-        <div className="content-tabs">
-          <button
-            className="active-tab"
-            onClick={async () => {
-              const results = await getPopularMovies();
-
-              setMovies(results);
-            }}
-          >
-            Trending Now
-          </button>
-
-          <button
-            onClick={async () => {
-              const results = await searchMovies("popular");
-
-              setMovies(results);
-            }}
-          >
-            Popular
-          </button>
-
-          <button
-            onClick={async () => {
-              const results = await searchMovies("original");
-
-              setMovies(results);
-            }}
-          >
-            LTM Original
-          </button>
-
-          <button
-            onClick={async () => {
-              const results = await searchMovies("premiere");
-
-              setMovies(results);
-            }}
-          >
-            Premiers
-          </button>
-
-          <button
-            onClick={async () => {
-              const results = await searchMovies("recent");
-
-              setMovies(results);
-            }}
-          >
-            Recently Added
-          </button>
-        </div>
-
         <div className="genre-pills">
-          <button onClick={() => handleGenreClick(28)}>
-            Action
-          </button>
-
-          <button onClick={() => handleGenreClick(12)}>
-            Adventure
-          </button>
-
-          <button onClick={() => handleGenreClick(16)}>
-            Anime
-          </button>
-
-          <button onClick={() => handleGenreClick(36)}>
-            Biography
-          </button>
-
-          <button onClick={() => handleGenreClick(80)}>
-            Crime
-          </button>
-
-          <button onClick={() => handleGenreClick(35)}>
-            Comedy
-          </button>
-
-          <button onClick={() => handleGenreClick(99)}>
-            Documentary
-          </button>
-
-          <button onClick={() => handleGenreClick(18)}>
-            Drama
-          </button>
+          <button onClick={() => navigate("/genre/action")}>LTM Action</button>
+          <button onClick={() => navigate("/genre/adventure")}>LTM Adventure</button>
+          <button onClick={() => navigate("/genre/anime")}>LTM Anime</button>
+          <button onClick={() => navigate("/genre/biography")}>LTM Biography</button>
+          <button onClick={() => navigate("/genre/crime")}>LTM Crime</button>
+          <button onClick={() => navigate("/genre/comedy")}>LTM Comedy</button>
+          <button onClick={() => navigate("/genre/documentary")}>LTM Documentary</button>
+          <button onClick={() => navigate("/genre/drama")}>LTM Drama</button>
         </div>
 
-        <h2 className="row-title">Trending Movies, TV Shows & Anime</h2>
+        <h2 className="row-title">LTM Movies</h2>
 
         <div className="poster-row">
           {movieRow.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
+            <MovieCard
+              key={`${movie.media_type}-${movie.id}`}
+              movie={movie}
+            />
           ))}
         </div>
       </section>

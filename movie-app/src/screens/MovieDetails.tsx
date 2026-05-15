@@ -1,43 +1,90 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Header from "../components/Header";
 
 import type { Movie } from "../types/movie";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
+import { getDetails } from "../api/tmdb";
 
-const IMAGE_URL =
-  import.meta.env.VITE_MOVIE_IMAGE_URL;
+const IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
 export default function MovieDetails() {
-  const { id } = useParams();
+  const { id, mediaType } = useParams();
 
-  const [movie, setMovie] =
-    useState<Movie | null>(null);
+  const navigate = useNavigate();
 
+  const [movie, setMovie] = useState<Movie | null>(null);
   const [search, setSearch] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    async function loadMovie() {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}`
+    async function loadDetails() {
+      const results = await getDetails(
+        mediaType || "movie",
+        id
       );
 
-      const data = await response.json();
+      setMovie(results);
 
-      setMovie(data);
+      const savedFavorites =
+        localStorage.getItem("favorites");
+
+      const favorites = savedFavorites
+        ? JSON.parse(savedFavorites)
+        : [];
+
+      const alreadyFavorite = favorites.some(
+        (item: Movie) => item.id === results.id
+      );
+
+      setIsFavorite(alreadyFavorite);
     }
 
-    loadMovie();
-  }, [id]);
+    loadDetails();
+  }, [id, mediaType]);
 
   function handleSearch() {
     console.log(search);
   }
 
+  function toggleFavorite() {
+    if (!movie) return;
+
+    const savedFavorites =
+      localStorage.getItem("favorites");
+
+    const favorites = savedFavorites
+      ? JSON.parse(savedFavorites)
+      : [];
+
+    if (isFavorite) {
+      const updatedFavorites = favorites.filter(
+        (item: Movie) => item.id !== movie.id
+      );
+
+      localStorage.setItem(
+        "favorites",
+        JSON.stringify(updatedFavorites)
+      );
+
+      setIsFavorite(false);
+    } else {
+      localStorage.setItem(
+        "favorites",
+        JSON.stringify([...favorites, movie])
+      );
+
+      setIsFavorite(true);
+    }
+  }
+
   if (!movie) {
-    return <h1>Loading...</h1>;
+    return (
+      <div className="details-page">
+        <h1>Loading...</h1>
+      </div>
+    );
   }
 
   const heroImage =
@@ -48,6 +95,10 @@ export default function MovieDetails() {
         }`
       : "";
 
+  const posterImage = movie.poster_path
+    ? `${IMAGE_URL}w500${movie.poster_path}`
+    : "/vite.svg";
+
   return (
     <div className="details-page">
       <Header
@@ -55,6 +106,14 @@ export default function MovieDetails() {
         setSearch={setSearch}
         handleSearch={handleSearch}
       />
+
+      {/* BACK BUTTON */}
+      <button
+        className="back-btn"
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
 
       <section
         className="details-hero"
@@ -74,25 +133,42 @@ export default function MovieDetails() {
         <div className="details-content">
           <img
             className="details-poster"
-            src={`${IMAGE_URL}w500${movie.poster_path}`}
+            src={posterImage}
             alt={movie.title}
           />
 
           <div className="details-info">
             <span className="gold-badge">
-              LTM MOVIES
+              {movie.media_type === "tv"
+                ? "LTM TV"
+                : "LTM MOVIES"}
             </span>
 
-            <h1>{movie.title}</h1>
+            <div className="title-row">
+              <h1>{movie.title}</h1>
+
+              <button
+                className={
+                  isFavorite
+                    ? "title-heart active-heart"
+                    : "title-heart"
+                }
+                onClick={toggleFavorite}
+              >
+                ♥
+              </button>
+            </div>
 
             <div className="details-meta">
               <span>
-                ⭐ {movie.vote_average.toFixed(1)}
+                ⭐ {movie.vote_average?.toFixed(1)}
               </span>
 
               <span>•</span>
 
-              <span>{movie.release_date}</span>
+              <span>
+                {movie.release_date}
+              </span>
             </div>
 
             <p>{movie.overview}</p>
@@ -100,10 +176,6 @@ export default function MovieDetails() {
             <div className="details-buttons">
               <button className="play-btn">
                 ▶ WATCH NOW
-              </button>
-
-              <button className="add-btn">
-                ＋ ADD TO WATCHLIST
               </button>
             </div>
           </div>

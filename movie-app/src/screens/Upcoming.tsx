@@ -6,29 +6,33 @@ import MovieCard from "../components/MovieCard";
 
 import type { Movie } from "../types/movie";
 
-import { getPopularMovies, searchMovies } from "../api/tmdb";
+import { searchMovies } from "../api/tmdb";
 
-export default function Movies() {
+const API_KEY = import.meta.env.VITE_API_KEY;
+
+export default function Upcoming() {
   const navigate = useNavigate();
 
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    async function loadMovies() {
-      const results = await getPopularMovies();
+    async function loadUpcomingMovies() {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`
+      );
 
-      setMovies(results);
+      const data = await response.json();
+
+      setMovies(data.results);
     }
 
-    loadMovies();
+    loadUpcomingMovies();
   }, []);
 
   async function handleSearch() {
     const results =
-      search.trim() === ""
-        ? await getPopularMovies()
-        : await searchMovies(search);
+      search.trim() === "" ? movies : await searchMovies(search);
 
     setMovies(results);
   }
@@ -46,7 +50,7 @@ export default function Movies() {
       </button>
 
       <section className="all-page">
-        <h1>LTM Movies</h1>
+        <h1>LTM Upcoming</h1>
 
         <div className="movie-grid">
           {movies.map((movie) => (

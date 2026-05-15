@@ -13,23 +13,14 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header className="header">
-      <h1 className="header-logo">LTM ENT</h1>
+      <h1 className="header-logo">LTM Movie Studio</h1>
 
       <nav className="header-nav">
-  <NavLink to="/home">Home</NavLink>
-
-  <NavLink to="/movies">
-    Movies
-  </NavLink>
-
-  <NavLink to="/tv-shows">
-    TV Shows
-  </NavLink>
-
-  <NavLink to="/animes">
-    Animes
-  </NavLink>
-</nav>
+        <NavLink to="/home">Home</NavLink>
+        <NavLink to="/now-playing">Now Playing</NavLink>
+        <NavLink to="/upcoming">Upcoming</NavLink>
+        <NavLink to="/favorites">Favorites</NavLink>
+      </nav>
 
       <div className="header-search">
         <input
