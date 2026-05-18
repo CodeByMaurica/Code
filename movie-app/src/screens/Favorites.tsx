@@ -1,29 +1,53 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
 
 import type { Movie } from "../types/movie";
 
-export default function Favorites() {
-  const navigate = useNavigate();
+import { searchMovies } from "../api/tmdb";
 
-  const [favorites, setFavorites] = useState<Movie[]>(() => {
-    const savedFavorites = localStorage.getItem("favorites");
-    return savedFavorites ? JSON.parse(savedFavorites) : [];
-  });
+function getFavorites(): Movie[] {
+  const savedFavorites = localStorage.getItem("favorites");
+
+  return savedFavorites
+    ? JSON.parse(savedFavorites)
+    : [];
+}
+
+export default function Favorites() {
+  const [favorites, setFavorites] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
-  function handleSearch() {
-    const savedFavorites = localStorage.getItem("favorites");
-    const allFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
+  useEffect(() => {
+    setFavorites(getFavorites());
 
-    const filtered = allFavorites.filter((movie: Movie) =>
-      movie.title.toLowerCase().includes(search.toLowerCase())
+    function updateFavorites() {
+      setFavorites(getFavorites());
+    }
+
+    window.addEventListener(
+      "favoritesUpdated",
+      updateFavorites
     );
 
-    setFavorites(filtered);
+    return () => {
+      window.removeEventListener(
+        "favoritesUpdated",
+        updateFavorites
+      );
+    };
+  }, []);
+
+  async function handleSearch() {
+    if (search.trim().length === 0) {
+      setFavorites(getFavorites());
+      return;
+    }
+
+    const results = await searchMovies(search);
+
+    setFavorites(results);
   }
 
   return (
@@ -34,19 +58,17 @@ export default function Favorites() {
         handleSearch={handleSearch}
       />
 
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
-
-      <section className="all-page">
-        <h1>LTM Favorites</h1>
+      <section className="below-hero">
+        <h2 className="row-title">
+          My Favorites
+        </h2>
 
         {favorites.length === 0 ? (
           <p className="empty-message">
-            Your favorite movies and shows will show here.
+            No favorite movies yet.
           </p>
         ) : (
-          <div className="movie-grid">
+          <div className="poster-row">
             {favorites.map((movie) => (
               <MovieCard
                 key={`${movie.media_type}-${movie.id}`}

@@ -1,39 +1,31 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
-
 import type { Movie } from "../types/movie";
 
-import { searchMovies } from "../api/tmdb";
-
-const API_KEY = import.meta.env.VITE_API_KEY;
+import { getUpcomingMovies, searchMovies } from "../api/tmdb";
 
 export default function Upcoming() {
-  const navigate = useNavigate();
-
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    async function loadUpcomingMovies() {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}`
-      );
-
-      const data = await response.json();
-
-      setMovies(data.results);
-    }
-
-    loadUpcomingMovies();
+    loadMovies();
   }, []);
 
-  async function handleSearch() {
-    const results =
-      search.trim() === "" ? movies : await searchMovies(search);
+  async function loadMovies() {
+    const results = await getUpcomingMovies();
+    setMovies(results);
+  }
 
+  async function handleSearch() {
+    if (search.trim().length === 0) {
+      loadMovies();
+      return;
+    }
+
+    const results = await searchMovies(search);
     setMovies(results);
   }
 
@@ -45,14 +37,12 @@ export default function Upcoming() {
         handleSearch={handleSearch}
       />
 
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+      <section className="below-hero">
+        <h2 className="row-title">
+          {search.trim().length > 0 ? "Search Results" : "Upcoming Movies"}
+        </h2>
 
-      <section className="all-page">
-        <h1>LTM Upcoming</h1>
-
-        <div className="movie-grid">
+        <div className="poster-row">
           {movies.map((movie) => (
             <MovieCard
               key={`${movie.media_type}-${movie.id}`}

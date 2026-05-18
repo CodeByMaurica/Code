@@ -22,7 +22,6 @@ export default function App() {
       <Route path="/genre/:genreName" element={<GenrePage />} />
 
       <Route path="/details/:mediaType/:id" element={<MovieDetails />} />
-      <Route path="/movie/:id" element={<MovieDetails />} />
     </Routes>
   );
 }

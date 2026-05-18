@@ -3,13 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
-
 import type { Movie } from "../types/movie";
 
-import {
-  getHomeContent,
-  searchMovies,
-} from "../api/tmdb";
+import { getHomeContent, searchMovies } from "../api/tmdb";
 
 const IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
@@ -20,20 +16,21 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function loadContent() {
-      const results = await getHomeContent();
-      setMovies(results);
-    }
-
     loadContent();
   }, []);
 
-  async function handleSearch() {
-    const results =
-      search.trim() === ""
-        ? await getHomeContent()
-        : await searchMovies(search);
+  async function loadContent() {
+    const results = await getHomeContent();
+    setMovies(results);
+  }
 
+  async function handleSearch() {
+    if (search.trim().length === 0) {
+      loadContent();
+      return;
+    }
+
+    const results = await searchMovies(search);
     setMovies(results);
   }
 
@@ -83,10 +80,6 @@ export default function Home() {
             <h1>{heroMovie.title}</h1>
 
             <p>{heroMovie.overview}</p>
-
-            <div className="hero-buttons">
-              <button className="play-btn">▶ WATCH</button>
-            </div>
           </div>
         </section>
       )}
@@ -103,7 +96,9 @@ export default function Home() {
           <button onClick={() => navigate("/genre/drama")}>LTM Drama</button>
         </div>
 
-        <h2 className="row-title">LTM Movies</h2>
+        <h2 className="row-title">
+          {search.trim().length > 0 ? "Search Results" : "LTM Movies"}
+        </h2>
 
         <div className="poster-row">
           {movieRow.map((movie) => (

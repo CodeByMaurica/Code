@@ -1,35 +1,31 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import Header from "../components/Header";
 import MovieCard from "../components/MovieCard";
-
 import type { Movie } from "../types/movie";
 
 import { getNowPlayingMovies, searchMovies } from "../api/tmdb";
 
 export default function NowPlaying() {
-  const navigate = useNavigate();
-
   const [movies, setMovies] = useState<Movie[]>([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    async function loadMovies() {
-      const results = await getNowPlayingMovies();
-
-      setMovies(results);
-    }
-
     loadMovies();
   }, []);
 
-  async function handleSearch() {
-    const results =
-      search.trim() === ""
-        ? await getNowPlayingMovies()
-        : await searchMovies(search);
+  async function loadMovies() {
+    const results = await getNowPlayingMovies();
+    setMovies(results);
+  }
 
+  async function handleSearch() {
+    if (search.trim().length === 0) {
+      loadMovies();
+      return;
+    }
+
+    const results = await searchMovies(search);
     setMovies(results);
   }
 
@@ -41,14 +37,12 @@ export default function NowPlaying() {
         handleSearch={handleSearch}
       />
 
-      <button className="back-btn" onClick={() => navigate(-1)}>
-        ← Back
-      </button>
+      <section className="below-hero">
+        <h2 className="row-title">
+          {search.trim().length > 0 ? "Search Results" : "Now Playing"}
+        </h2>
 
-      <section className="all-page">
-        <h1>LTM Now Playing</h1>
-
-        <div className="movie-grid">
+        <div className="poster-row">
           {movies.map((movie) => (
             <MovieCard
               key={`${movie.media_type}-${movie.id}`}

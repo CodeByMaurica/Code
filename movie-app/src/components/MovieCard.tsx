@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Movie } from "../types/movie";
 
@@ -7,77 +8,66 @@ type Props = {
 
 const IMAGE_URL = import.meta.env.VITE_IMAGE_BASE_URL;
 
-const FALLBACK_IMAGE =
-  "https://via.placeholder.com/500x750?text=No+Image";
+const FALLBACK_IMAGE = "https://placehold.co/500x750?text=No+Image";
+
+function getFavorites(): Movie[] {
+  const savedFavorites = localStorage.getItem("favorites");
+  return savedFavorites ? JSON.parse(savedFavorites) : [];
+}
 
 export default function MovieCard({ movie }: Props) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
   const posterImage = movie.poster_path
     ? `${IMAGE_URL}w500${movie.poster_path}`
     : FALLBACK_IMAGE;
 
   const mediaType = movie.media_type || "movie";
 
-  const savedFavorites =
-    localStorage.getItem("favorites");
+  useEffect(() => {
+    const favorites = getFavorites();
 
-  const favorites = savedFavorites
-    ? JSON.parse(savedFavorites)
-    : [];
+    const alreadyFavorite = favorites.some(
+      (item: Movie) => item.id === movie.id
+    );
 
-  const isFavorite = favorites.some(
-    (item: Movie) => item.id === movie.id
-  );
+    setIsFavorite(alreadyFavorite);
+  }, [movie.id]);
 
-  function toggleFavorite(
-    e: React.MouseEvent<HTMLButtonElement>
-  ) {
+  function toggleFavorite(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
-    const savedFavorites =
-      localStorage.getItem("favorites");
-
-    const favorites = savedFavorites
-      ? JSON.parse(savedFavorites)
-      : [];
+    const favorites = getFavorites();
 
     const alreadyAdded = favorites.some(
       (item: Movie) => item.id === movie.id
     );
 
+    let updatedFavorites;
+
     if (alreadyAdded) {
-      const updatedFavorites = favorites.filter(
+      updatedFavorites = favorites.filter(
         (item: Movie) => item.id !== movie.id
       );
 
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify(updatedFavorites)
-      );
+      setIsFavorite(false);
     } else {
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify([...favorites, movie])
-      );
+      updatedFavorites = [...favorites, movie];
+
+      setIsFavorite(true);
     }
 
-    window.location.reload();
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+
+    window.dispatchEvent(new Event("favoritesUpdated"));
   }
 
   return (
-    <Link
-      to={`/details/${mediaType}/${movie.id}`}
-      className="movie-link"
-    >
+    <Link to={`/details/${mediaType}/${movie.id}`} className="movie-link">
       <div className="movie-card">
-        {/* IMAGE */}
         <div className="movie-image-container">
-          <img
-            className="movie-poster"
-            src={posterImage}
-            alt={movie.title}
-          />
+          <img className="movie-poster" src={posterImage} alt={movie.title} />
 
-          {/* HEART */}
           <button
             className={
               isFavorite
@@ -90,13 +80,10 @@ export default function MovieCard({ movie }: Props) {
           </button>
         </div>
 
-        {/* INFO */}
         <div className="movie-info">
           <h3>{movie.title}</h3>
 
-          <p>
-            ⭐ {movie.vote_average?.toFixed(1)}
-          </p>
+          <p>⭐ {movie.vote_average?.toFixed(1)}</p>
         </div>
       </div>
     </Link>

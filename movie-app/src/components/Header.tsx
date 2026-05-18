@@ -1,3 +1,4 @@
+import React from "react";
 import { NavLink } from "react-router-dom";
 
 type HeaderProps = {
@@ -17,6 +18,7 @@ export default function Header({
 
       <nav className="header-nav">
         <NavLink to="/home">Home</NavLink>
+        <NavLink to="/movies">Movies</NavLink>
         <NavLink to="/now-playing">Now Playing</NavLink>
         <NavLink to="/upcoming">Upcoming</NavLink>
         <NavLink to="/favorites">Favorites</NavLink>
