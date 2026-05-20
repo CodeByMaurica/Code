@@ -1,0 +1,76 @@
+### ROOT
+GET http://localhost:3000
+
+
+### ABOUT
+GET http://localhost:3000/about
+
+
+### CONTACT
+GET http://localhost:3000/contact
+
+
+### GET ALL USERS
+GET http://localhost:3000/users
+
+
+### USER PARAM TEST
+GET http://localhost:3000/users/123
+
+
+### REGISTER USER
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "username": "maurica",
+  "password": "123456"
+}
+
+
+### REGISTER SAME USER AGAIN - SHOULD ERROR
+POST http://localhost:3000/register
+Content-Type: application/json
+
+{
+  "username": "maurica",
+  "password": "123456"
+}
+
+
+### LOGIN SUCCESS
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "maurica",
+  "password": "123456"
+}
+
+
+### LOGIN WRONG PASSWORD
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "maurica",
+  "password": "wrong"
+}
+
+
+### LOGIN USER NOT FOUND
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "fakeuser",
+  "password": "123456"
+}
+
+
+### DELETE USER
+DELETE http://localhost:3000/users/maurica
+
+
+### DELETE USER AGAIN - SHOULD ERROR
+DELETE http://localhost:3000/users/maurica
