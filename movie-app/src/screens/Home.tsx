@@ -15,23 +15,45 @@ export default function Home() {
 
   const navigate = useNavigate();
 
+  // LOAD MOVIES
   useEffect(() => {
     loadContent();
   }, []);
 
+  // TEST BACKEND CONNECTION
+  useEffect(() => {
+    fetch("http://localhost:3000/")
+      .then((res) => res.text())
+      .then((data) => {
+        console.log("Server response:", data);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+      });
+  }, []);
+
   async function loadContent() {
-    const results = await getHomeContent();
-    setMovies(results);
+    try {
+      const results = await getHomeContent();
+      setMovies(results);
+    } catch (error) {
+      console.error("Movie fetch failed:", error);
+    }
   }
 
   async function handleSearch() {
-    if (search.trim().length === 0) {
-      loadContent();
-      return;
-    }
+    try {
+      if (search.trim().length === 0) {
+        loadContent();
+        return;
+      }
 
-    const results = await searchMovies(search);
-    setMovies(results);
+      const results = await searchMovies(search);
+      setMovies(results);
+
+    } catch (error) {
+      console.error("Search failed:", error);
+    }
   }
 
   const heroMovie = movies[0];
@@ -39,7 +61,9 @@ export default function Home() {
 
   const heroImage =
     heroMovie?.backdrop_path || heroMovie?.poster_path
-      ? `${IMAGE_URL}original${heroMovie.backdrop_path || heroMovie.poster_path}`
+      ? `${IMAGE_URL}original${
+          heroMovie.backdrop_path || heroMovie.poster_path
+        }`
       : "";
 
   return (
@@ -74,7 +98,11 @@ export default function Home() {
               <span>•</span>
               <span>{heroMovie.release_date?.slice(0, 4)}</span>
               <span>•</span>
-              <span>{heroMovie.media_type === "tv" ? "TV Show" : "Movie"}</span>
+              <span>
+                {heroMovie.media_type === "tv"
+                  ? "TV Show"
+                  : "Movie"}
+              </span>
             </div>
 
             <h1>{heroMovie.title}</h1>
@@ -86,18 +114,43 @@ export default function Home() {
 
       <section className="below-hero">
         <div className="genre-pills">
-          <button onClick={() => navigate("/genre/action")}>LTM Action</button>
-          <button onClick={() => navigate("/genre/adventure")}>LTM Adventure</button>
-          <button onClick={() => navigate("/genre/anime")}>LTM Anime</button>
-          <button onClick={() => navigate("/genre/biography")}>LTM Biography</button>
-          <button onClick={() => navigate("/genre/crime")}>LTM Crime</button>
-          <button onClick={() => navigate("/genre/comedy")}>LTM Comedy</button>
-          <button onClick={() => navigate("/genre/documentary")}>LTM Documentary</button>
-          <button onClick={() => navigate("/genre/drama")}>LTM Drama</button>
+          <button onClick={() => navigate("/genre/action")}>
+            LTM Action
+          </button>
+
+          <button onClick={() => navigate("/genre/adventure")}>
+            LTM Adventure
+          </button>
+
+          <button onClick={() => navigate("/genre/anime")}>
+            LTM Anime
+          </button>
+
+          <button onClick={() => navigate("/genre/biography")}>
+            LTM Biography
+          </button>
+
+          <button onClick={() => navigate("/genre/crime")}>
+            LTM Crime
+          </button>
+
+          <button onClick={() => navigate("/genre/comedy")}>
+            LTM Comedy
+          </button>
+
+          <button onClick={() => navigate("/genre/documentary")}>
+            LTM Documentary
+          </button>
+
+          <button onClick={() => navigate("/genre/drama")}>
+            LTM Drama
+          </button>
         </div>
 
         <h2 className="row-title">
-          {search.trim().length > 0 ? "Search Results" : "LTM Movies"}
+          {search.trim().length > 0
+            ? "Search Results"
+            : "LTM Movies"}
         </h2>
 
         <div className="poster-row">

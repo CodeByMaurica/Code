@@ -22,5 +22,24 @@
   {
     "username": "Maurica",
     "password": "123d456"
+  },
+  {
+    "username": "MauricaB",
+    "password": "123d4567"
+  },
+  {
+    "username": "maurical",
+    "password": "theonetoday"
+  },
+  {
+    "username": "LTMTester",
+    "password": "Gotitohyea"
+  },
+  {
+    "firstName": "Maurica",
+    "lastName": "Bellaphant",
+    "email": "ltmaistudio@gmail.com",
+    "username": "ltmaistudio@gmail.com",
+    "password": "whatever12345"
   }
 ]

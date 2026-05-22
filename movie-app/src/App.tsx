@@ -7,21 +7,60 @@ import Upcoming from "./screens/Upcoming";
 import Favorites from "./screens/Favorites";
 import MovieDetails from "./screens/MovieDetails";
 import GenrePage from "./screens/GenrePage";
+import Login from "./screens/Login";
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" />} />
 
-      <Route path="/home" element={<Home />} />
-      <Route path="/movies" element={<Movies />} />
-      <Route path="/now-playing" element={<NowPlaying />} />
-      <Route path="/upcoming" element={<Upcoming />} />
-      <Route path="/favorites" element={<Favorites />} />
+      {/* START AT LOGIN PAGE */}
+      <Route
+        path="/"
+        element={<Navigate to="/login" />}
+      />
 
-      <Route path="/genre/:genreName" element={<GenrePage />} />
+      {/* LOGIN PAGE */}
+      <Route
+        path="/login"
+        element={<Login />}
+      />
 
-      <Route path="/details/:mediaType/:id" element={<MovieDetails />} />
+      {/* MAIN APP */}
+      <Route
+        path="/home"
+        element={<Home />}
+      />
+
+      <Route
+        path="/movies"
+        element={<Movies />}
+      />
+
+      <Route
+        path="/now-playing"
+        element={<NowPlaying />}
+      />
+
+      <Route
+        path="/upcoming"
+        element={<Upcoming />}
+      />
+
+      <Route
+        path="/favorites"
+        element={<Favorites />}
+      />
+
+      <Route
+        path="/genre/:genreName"
+        element={<GenrePage />}
+      />
+
+      <Route
+        path="/details/:mediaType/:id"
+        element={<MovieDetails />}
+      />
+
     </Routes>
   );
 }
