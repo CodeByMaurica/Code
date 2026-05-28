@@ -1,0 +1,22 @@
+:root {
+  --black: #050505;
+  --card: #0d0d0d;
+  --teal: #14b8a6;
+  --dark-teal: #0f766e;
+  --gold: #d4af37;
+  --border: #222;
+  --white: #ffffff;
+  --gray: #9ca3af;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+}
