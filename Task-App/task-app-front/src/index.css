@@ -1,0 +1,35 @@
+:root {
+  --black: #050505;
+  --card: #0d0d0d;
+  --card-light: #151515;
+
+  --teal-light: #4fd1d9;
+  --teal: #2ba7b8;
+  --teal-dark: #0f5e69;
+
+  --gold-light: #f5e6a8;
+  --gold: #d4af37;
+  --gold-dark: #a37d12;
+
+  --border: rgba(212, 175, 55, 0.18);
+  --white: #ffffff;
+  --gray: #a1a1aa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: Arial, Helvetica, sans-serif;
+}
