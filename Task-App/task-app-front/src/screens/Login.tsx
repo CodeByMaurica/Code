@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
+
 interface LoginProps {
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -8,30 +9,53 @@ interface LoginProps {
 function Login({ setIsLoggedIn }: LoginProps) {
   const navigate = useNavigate();
 
-  // Switches between Login form and Register form
   const [isRegister, setIsRegister] = useState(false);
 
-  // Form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  // Only used on Register form
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Only check confirm password if user is registering
     if (isRegister && password !== confirmPassword) {
       alert("Passwords do not match");
       return;
     }
 
-    // Mark user as logged in
-    setIsLoggedIn(true);
+    const endpoint = isRegister
+      ? "http://localhost:5000/register"
+      : "http://localhost:5000/login";
 
-    // Send user to Home page
-    navigate("/home");
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      alert(data.message);
+
+      if (!response.ok) {
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      setIsLoggedIn(true);
+
+      navigate("/home");
+    } catch (error) {
+      console.error(error);
+      alert("Could not connect to server");
+    }
   };
 
   return (
@@ -68,11 +92,26 @@ function Login({ setIsLoggedIn }: LoginProps) {
             />
           )}
 
-          <button type="submit">{isRegister ? "Register" : "Login"}</button>
+          <button type="submit">
+            {isRegister ? "Register" : "Login"}
+          </button>
 
-          <p>
-            {isRegister ? "Already have an account?" : "Need an account?"}{" "}
-            <span onClick={() => setIsRegister(!isRegister)}>
+          <p className="auth-switch">
+            {isRegister
+              ? "Already have an account?"
+              : "Need an account?"}{" "}
+            <span
+              onClick={() => {
+                setIsRegister(!isRegister);
+                setEmail("");
+                setPassword("");
+                setConfirmPassword("");
+              }}
+              style={{
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
               {isRegister ? "Login" : "Register"}
             </span>
           </p>

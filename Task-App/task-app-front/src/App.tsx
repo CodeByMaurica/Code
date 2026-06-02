@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./screens/Login";
@@ -10,11 +10,25 @@ import "./App.css";
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+
+    if (savedUser) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   return (
     <Routes>
       <Route
         path="/login"
-        element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        element={
+          isLoggedIn ? (
+            <Navigate to="/home" />
+          ) : (
+            <Login setIsLoggedIn={setIsLoggedIn} />
+          )
+        }
       />
 
       <Route
