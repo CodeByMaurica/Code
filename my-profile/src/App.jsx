@@ -19,6 +19,35 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
       </Routes>
+
+      <footer className="footer">
+        <p>
+          Designed & Developed by Maurica Bellaphant |
+          Full Stack Developer & AI Automation Specialist
+        </p>
+
+        <div className="footer-links">
+          <a href="mailto:m.bellaphant@outlook.com">
+            Email
+          </a>
+
+          <a
+            href="https://github.com/mauricabellaphant"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub
+          </a>
+
+          <a
+            href="https://linkedin.com/in/mauricabellaphant"
+            target="_blank"
+            rel="noreferrer"
+          >
+            LinkedIn
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
