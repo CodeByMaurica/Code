@@ -79,14 +79,39 @@ export default function Home() {
       </section>
 
       <section className="section-card">
-        <h2>Contact</h2>
+  <h2>Contact</h2>
 
-        <p>Email: m.bellaphant@outlook.com</p>
+  <p>
+    Email:{" "}
+    <a href="mailto:m.bellaphant@outlook.com">
+      m.bellaphant@outlook.com
+    </a>
+  </p>
 
-        <p>LinkedIn: https://www.linkedin.com/in/maurica-bellaphant-6069b63b2/</p>
+  <p>
+    LinkedIn:{" "}
+    <a
+      href="https://linkedin.com/in/mauricabellaphant"
+      target="_blank"
+      rel="noreferrer"
+    >
+      www.linkedin.com/in/msbellaphant
 
-        <p>GitHub: https://github.com/CodeByMaurica</p>
-      </section>
+
+    </a>
+  </p>
+
+  <p>
+    GitHub:{" "}
+    <a
+      href="https://github.com/CodebyMaurica"
+      target="_blank"
+      rel="noreferrer"
+    >
+      github.com/CodebyMaurica
+    </a>
+  </p>
+</section>
     </main>
   );
 }
