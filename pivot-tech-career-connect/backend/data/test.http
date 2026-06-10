@@ -1,0 +1,12 @@
+POST http://localhost:5000/api/jobs
+Content-Type: application/json
+
+{
+  "title": "Junior Software Developer",
+  "company": "Tech Company",
+  "program": "Software Development with AI",
+  "level": "Entry Level",
+  "workType": "Remote",
+  "state": "Iowa",
+  "status": "Published"
+}
